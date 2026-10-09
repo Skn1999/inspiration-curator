@@ -42,17 +42,28 @@ function renderFolders(items) {
   const emptyState = document.getElementById('emptyState');
   const totalCount = document.getElementById('totalCount');
 
-  totalCount.textContent = `${items.length} ${items.length === 1 ? 'item' : 'items'}`;
+  if (totalCount) {
+    totalCount.textContent = `${items.length} ${items.length === 1 ? 'item' : 'items'}`;
+  }
 
   if (!items.length) {
-    container.innerHTML = '';
-    container.appendChild(emptyState);
-    emptyState.style.display = 'flex';
+    if (container) {
+      container.innerHTML = '';
+      container.style.display = 'none';
+    }
+    if (emptyState) {
+      emptyState.style.display = 'flex';
+    }
     return;
   }
 
-  emptyState.style.display = 'none';
-  container.innerHTML = '';
+  if (emptyState) {
+    emptyState.style.display = 'none';
+  }
+  if (container) {
+    container.style.display = 'flex';
+    container.innerHTML = '';
+  }
 
   // Group items by folder name (Site Title -> domain fallback)
   const groups = {};
