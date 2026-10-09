@@ -88,12 +88,12 @@
     const boxLeft = Math.max(20, (window.innerWidth - boxWidth) / 2);
     const boxTop = Math.max(40, (window.innerHeight - boxHeight) / 2);
 
-    overlayRoot = document.createElement('div');
+    // Use native <dialog> opened with showModal()
+    // When a page has an open modal dialog (like <dialog> or <cari-modal>), the browser makes ALL non-modal
+    // elements and popovers inert! Calling showModal() on our extension dialog places us at the very top of
+    // the Top Layer and guarantees our crosshairs, drag handles, and buttons remain fully interactive.
+    overlayRoot = document.createElement('dialog');
     overlayRoot.id = 'inspire-overlay-root';
-    // Promote to Top Layer using Popover API (browser top layer beats any dialog, modal, or z-index)
-    if (typeof overlayRoot.showPopover === 'function') {
-      overlayRoot.setAttribute('popover', 'manual');
-    }
 
     overlayRoot.innerHTML = `
       <div class="inspire-backdrop visible"></div>
@@ -125,14 +125,13 @@
       <div class="inspire-flash"></div>
     `;
 
-    // Append to documentElement to avoid any body-level transform/overflow/filter issues
     (document.documentElement || document.body).appendChild(overlayRoot);
 
-    if (typeof overlayRoot.showPopover === 'function') {
+    if (typeof overlayRoot.showModal === 'function') {
       try {
-        overlayRoot.showPopover();
+        overlayRoot.showModal();
       } catch (e) {
-        // Fallback gracefully if popover is already showing or not supported
+        overlayRoot.show();
       }
     }
 

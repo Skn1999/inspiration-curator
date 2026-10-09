@@ -1,23 +1,32 @@
 /* Inspiration Curator — Injected Overlay Styles */
-/* Root container isolated from host page styles */
+/* Root container as native modal dialog */
 #inspire-overlay-root {
   position: fixed !important;
   inset: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
   background: transparent !important;
+  outline: none !important;
   z-index: 2147483647 !important;
   pointer-events: none !important;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif !important;
   -webkit-font-smoothing: antialiased !important;
   user-select: none !important;
   overflow: hidden !important;
+  color: inherit !important;
 }
 
-/* Ensure native popovers don't have browser default margins/borders */
+/* Reset default native <dialog>::backdrop */
+#inspire-overlay-root::backdrop {
+  background: transparent !important;
+}
+
+/* Ensure native popovers/dialogs don't have browser default margins/borders */
 #inspire-overlay-root:popover-open,
 .inspire-macos-folder-toast:popover-open,
 .inspire-flying-crop:popover-open {
