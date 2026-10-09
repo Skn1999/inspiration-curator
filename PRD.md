@@ -54,7 +54,14 @@ Whenever a capture occurs, automatically extract and bundle:
 - **Page Snapshot / WayBack Reference:** Original URL + semantic meta tags (OpenGraph title, description).
 
 #### C. In-Browser Curation & Storage
+- **Automatic Domain-Based Folder Organization (MVP Requirement):**
+  - Content captured from the same domain is automatically grouped together into a dedicated folder.
+  - **Folder Naming Hierarchy:**
+    1. Primary: Captured from the Website / Document Title (`document.title` or OpenGraph site name, cleaned of extraneous tab counts or notification markers).
+    2. Fallback: If title extraction is blank, missing, or fails, gracefully reverts to the site hostname / URL (e.g., `stripe.com`, `linear.app`).
+  - Users can browse folders, view item counts per site, or create custom manual folders in later steps.
 - **Quick-Tag & Notes Toast/Overlay:** Immediately after capture, a subtle non-intrusive floating pill appears:
+  - Displays target destination folder (e.g. `📁 Stripe Documentation`).
   - Add tags (e.g., `#HeroSection`, `#MicroInteraction`, `#Onboarding`).
   - Add a quick note ("Check hover animation on CTA").
 - **Local-First Library:** Stored locally in IndexedDB / Chrome Storage with thumbnail gallery, search by domain/tags, and filtering by type (Static / Motion / Video).
@@ -64,7 +71,20 @@ Whenever a capture occurs, automatically extract and bundle:
 
 ---
 
-### 5. Technical Architecture (Manifest V3)
+### 5. UI Design & Animation System (Apple Design Standards)
+Following the active `apple-design` skill guidelines:
+- **Aesthetic:** Dark-mode first, minimal, refined visual language.
+- **Surfaces & Depth:** Deep monochrome palette (`#0E1015`, `#161922`, `#1F232F`). Elevation is expressed through subtle background luminance steps and 1px borders (`rgba(255, 255, 255, 0.08)`), rather than heavy drop-shadows.
+- **Accents:** Restrained Apple System Blue (`#0A84FF` / `#0071E3`) for active states, primary capture buttons, and folder selection rings.
+- **Motion & Transitions:**
+  - Micro-interactions (hover, active press, badge transitions): snappy **200ms**.
+  - Component drawers, side panel reveals, modal sheets: **260ms – 300ms** using `cubic-bezier(0.25, 1, 0.5, 1)` ease-out curves.
+  - Press interactions: subtle tactile scale-down (`transform: scale(0.97)`).
+- **Glassmorphism:** Overlays and in-page capture toolbars use backdrop-filtered frosted glass (`backdrop-filter: blur(20px) saturate(180%)`).
+
+---
+
+### 6. Technical Architecture (Manifest V3)
 
 ```
 ┌────────────────────────────────────────────────────────┐
@@ -72,21 +92,22 @@ Whenever a capture occurs, automatically extract and bundle:
 ├────────────────────────────────────────────────────────┤
 │  Content Script                                        │
 │  - Element hovering & Marquee Selection UI             │
-│  - DOM Inspection & CSS Token Extraction               │
-│  - Floating Quick-Tag & Note Toast                     │
+│  - DOM Inspection (Site Title, Meta, CSS Tokens)       │
+│  - Floating Quick-Tag & Folder Confirmation Toast      │
 ├────────────────────────────────────────────────────────┤
 │  Background Service Worker                             │
 │  - Coordinates capture actions & shortcut listeners   │
 │  - Calls chrome.tabs.captureVisibleTab (Screenshots)   │
 │  - Requests chrome.tabCapture stream (Motion capture)  │
-│  - Manages chrome.storage & IndexedDB bridge           │
+│  - Manages Folder Indexing & Chrome Storage / IDB      │
 ├────────────────────────────────────────────────────────┤
 │  Offscreen Document (chrome.offscreen)                 │
 │  - Receives tab media stream                           │
 │  - Crops video stream to selection bounds via Canvas   │
 │  - Runs MediaRecorder (WebM/MP4)                       │
 ├────────────────────────────────────────────────────────┤
-│  Extension Side Panel / Dashboard                      │
+│  Extension Side Panel / Dashboard (Apple Design Dark)  │
+│  - Folder grouping by Domain / Site Title              │
 │  - Visual gallery of saved inspirations                │
 │  - Search, filter by tags/domain/media type            │
 │  - Integrations (Notion, Figma, JSON/Zip export)       │
@@ -95,18 +116,18 @@ Whenever a capture occurs, automatically extract and bundle:
 
 ---
 
-### 6. Product Roadmap & Phasing
+### 7. Product Roadmap & Phasing
 
 | Phase | Milestone | Features |
 |---|---|---|
-| **Phase 1: MVP Core** | Static Area Capture & Metadata | • Area drag-and-drop crop screenshot<br>• Metadata collection (URL, title, timestamp, viewport)<br>• Local gallery & tagging in extension Side Panel |
+| **Phase 1: MVP Core** | Static Area Capture, Metadata & Auto-Folders | • Area drag-and-drop crop screenshot<br>• Metadata collection (URL, title, timestamp, viewport)<br>• **Domain-based Auto-Folder creation (Site Title → URL fallback)**<br>• Local gallery & folder list in extension Side Panel (Apple Design Dark) |
 | **Phase 2: Motion Capture** | Motion & Video Extractor | • Area-bounded tab recording (WebM/MP4)<br>• Direct HTML5 video link sniffer & download<br>• Recording duration presets (3s, 5s, 10s, manual) |
 | **Phase 3: Design Intelligence** | Styling & Token Extraction | • Auto-extract CSS font styles and color palette<br>• Copy as CSS / Tailwind snippet |
 | **Phase 4: Sync & Ecosystem** | Cloud & Tool Integrations | • Notion sync (via Notion API)<br>• Figma plugin / copy-as-frame<br>• Cloud backup & export |
 
 ---
 
-### 7. Open Brainstorming Questions for Discussion
+### 8. Open Brainstorming Questions for Discussion
 1. **Motion Output Format:** Should recorded animations be saved as lightweight WebM/MP4 video files, animated GIFs, or offer both? (WebM is tiny and 60fps; GIFs are widely portable).
 2. **Library Surface Area:** Should the collection library live primarily inside the **Chrome Side Panel** (opens beside whatever you browse) or as a standalone **Full-page Web App Dashboard**?
 3. **Storage Strategy:** Start purely offline/local-first (IndexedDB + local downloads) or connect to cloud storage from day one?
