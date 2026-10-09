@@ -7,6 +7,10 @@ let activeItem = null;
 document.addEventListener('DOMContentLoaded', () => {
   loadInspirations();
 
+  document.getElementById('snapCtaBtn').addEventListener('click', () => {
+    chrome.runtime.sendMessage({ action: 'START_CAPTURE_FROM_PANEL' });
+  });
+
   document.getElementById('refreshBtn').addEventListener('click', loadInspirations);
   document.getElementById('searchInput').addEventListener('input', (e) => {
     filterInspirations(e.target.value.toLowerCase().trim());

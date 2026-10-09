@@ -7,19 +7,29 @@
     "activeTab",
     "storage",
     "sidePanel",
-    "scripting"
+    "scripting",
+    "tabs"
   ],
   "host_permissions": [
     "<all_urls>"
   ],
   "action": {
-    "default_title": "Capture Inspiration"
+    "default_title": "Inspiration Curator Library"
   },
   "background": {
     "service_worker": "src/background/service-worker.js"
   },
   "side_panel": {
     "default_path": "src/sidepanel/sidepanel.html"
+  },
+  "commands": {
+    "start_capture": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+C",
+        "mac": "Command+Shift+C"
+      },
+      "description": "Start inspiration capture mode"
+    }
   },
   "icons": {
     "16": "icons/icon-16.png",
