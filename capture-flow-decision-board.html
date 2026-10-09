@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inspiration Curator — Smallest Viable Capture Flow & Overlay UI Decision Board</title>
+  <style>
+    :root {
+      --bg: #0b0d13;
+      --card-bg: #141721;
+      --card-inner: #1a1e2b;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      --accent-blue: #0a84ff;
+      --accent-blue-hover: #0071e3;
+      --accent-green: #30d158;
+      --accent-yellow: #ffd60a;
+      --accent-red: #ff453a;
+      --text-main: #f5f5f7;
+      --text-muted: #98989d;
+      --text-tertiary: #636366;
+      --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font-stack);
+      padding: 36px 24px 60px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 1280px; margin: 0 auto; }
+    header {
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 22px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(10, 132, 255, 0.15);
+      color: var(--accent-blue);
+      border: 1px solid rgba(10, 132, 255, 0.3);
+      margin-bottom: 10px;
+      letter-spacing: 0.3px;
+    }
+    h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.4px; }
+    p.lead { color: var(--text-muted); font-size: 14.5px; max-width: 900px; }
+    
+    .vision-callout {
+      margin-top: 18px;
+      background: rgba(10, 132, 255, 0.06);
+      border: 1px solid rgba(10, 132, 255, 0.2);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .vision-callout .shutter-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #1c2233;
+      border: 2px solid var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .shutter-icon::after {
+      content: '';
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .vision-callout h4 { font-size: 13.5px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+    .vision-callout p { font-size: 12.5px; color: var(--text-muted); }
+
+    .category-section { margin-top: 36px; }
+    .category-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .category-tag {
+      font-size: 10px;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(370px, 1fr));
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .arch-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.22s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .arch-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
+    .arch-card.approved {
+      border-color: var(--accent-green);
+      box-shadow: 0 0 24px rgba(48, 209, 88, 0.12);
+      background: linear-gradient(180deg, #161b24 0%, #131720 100%);
+    }
+    .arch-card.rejected {
+      border-color: var(--accent-red);
+      opacity: 0.55;
+      filter: grayscale(0.2);
+    }
+    .arch-card.discuss {
+      border-color: var(--accent-yellow);
+      box-shadow: 0 0 24px rgba(255, 214, 10, 0.12);
+      background: linear-gradient(180deg, #1c1a14 0%, #141721 100%);
+    }
+
+    .card-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      gap: 12px;
+    }
+    .card-title { font-size: 16.5px; font-weight: 700; color: #fff; line-height: 1.3; }
+    .pill-badge {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--accent-blue);
+      border: 1px solid rgba(10, 132, 255, 0.25);
+      white-space: nowrap;
+    }
+    .card-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .preview-box {
+      background: var(--card-inner);
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 14px;
+      font-size: 12px;
+    }
+
+    .specs-list {
+      list-style: none;
+      font-size: 12px;
+      margin: 10px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .specs-list li { color: #cbd5e1; }
+    .specs-list li strong { color: var(--text-muted); font-weight: 500; }
+
+    .pros-cons {
+      background: rgba(10, 13, 20, 0.6);
+      border-radius: 8px;
+      padding: 12px;
+      margin: 12px 0;
+      font-size: 11.5px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .pros-cons .pro { color: #86efac; margin-bottom: 5px; display: flex; gap: 6px; }
+    .pros-cons .con { color: #fca5a5; display: flex; gap: 6px; }
+
+    .decision-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .btn {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+    .btn.btn-approve.active { background: rgba(48, 209, 88, 0.2); border-color: var(--accent-green); color: #75f096; }
+    .btn.btn-reject.active { background: rgba(255, 69, 58, 0.2); border-color: var(--accent-red); color: #ffa39e; }
+    .btn.btn-discuss.active { background: rgba(255, 214, 10, 0.2); border-color: var(--accent-yellow); color: #fff066; }
+
+    .notes-input {
+      width: 100%;
+      margin-top: 10px;
+      background: #0d1017;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-size: 11.5px;
+      color: #fff;
+      display: none;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .notes-input:focus { border-color: var(--accent-blue); }
+    .notes-input.visible { display: block; }
+
+    .prompt-box-section {
+      background: #12151e;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      margin-top: 40px;
+      position: sticky;
+      bottom: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+    }
+    .prompt-box-section h3 {
+      font-size: 15px;
+      margin-bottom: 8px;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    textarea#codedPrompt {
+      width: 100%;
+      height: 180px;
+      background: #090b10;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      color: #7dd3fc;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+      font-size: 12px;
+      padding: 14px;
+      resize: vertical;
+      outline: none;
+      line-height: 1.5;
+    }
+    .btn-copy {
+      background: var(--accent-blue);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 7px;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-copy:hover { background: var(--accent-blue-hover); transform: scale(1.02); }
+    .status-summary {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 12px;
+      align-items: center;
+    }
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot-green { background: var(--accent-green); }
+    .dot-yellow { background: var(--accent-yellow); }
+    .dot-red { background: var(--accent-red); }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <span class="badge">Apple Design &amp; MVP Flow Review</span>
+    <h1>Smallest Viable Capture Flow &amp; Overlay UI Decision Board</h1>
+    <p class="lead">
+      Evaluating architecture, overlay controls, shutter mechanics, and the "capture to folder" animation for the initial MVP of <strong>Inspiration Curator</strong>.
+    </p>
+
+    <div class="vision-callout">
+      <div class="shutter-icon"></div>
+      <div>
+        <h4>User Stated Vision</h4>
+        <p>"As soon as user clicks the extension icon, an overlay resizable box shows up on the screen, which has a camera-like shutter button at the bottom. Clicking this captures the area, and an animation shows an image of the captured area being put into a folder."</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Section 1: Activation & Overlay Box -->
+  <div class="category-section">
+    <div class="category-title">
+      <span>1. Overlay Box Activation &amp; Initial Placement</span>
+      <span class="category-tag">UX &amp; Injection</span>
+    </div>
+    <div class="grid" id="gridActivation"></div>
+  </div>
+
+  <!-- Section 2: Shutter Button Design & Controls -->
+  <div class="category-section">
+    <div class="category-title">
+      <span>2. Shutter Button &amp; Toolbar Dock Controls</span>
+      <span class="category-tag">Apple Design Dark UI</span>
+    </div>
+    <div class="grid" id="gridShutter"></div>
+  </div>
+
+  <!-- Section 3: "Captured into Folder" Animation -->
+  <div class="category-section">
+    <div class="category-title">
+      <span>3. "Fly to Folder" Animation &amp; Confirmation Toast</span>
+      <span class="category-tag">Motion &amp; Feedback</span>
+    </div>
+    <div class="grid" id="gridAnimation"></div>
+  </div>
+
+  <!-- Section 4: Image Cropping & Quality Engine -->
+  <div class="category-section">
+    <div class="category-title">
+      <span>4. Pixel Ratio &amp; Screenshot Cropping Strategy</span>
+      <span class="category-tag">Technical Fidelity</span>
+    </div>
+    <div class="grid" id="gridTechnical"></div>
+  </div>
+
+  <!-- Prompt Box -->
+  <div class="prompt-box-section">
+    <h3>
+      <span>Live Coded Prompt for Antigravity</span>
+      <button class="btn-copy" onclick="copyPrompt()">Copy Coded Prompt</button>
+    </h3>
+    <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
+      Click buttons to Approve, Discuss, or Reject options, and add custom notes. The prompt updates dynamically—copy and paste it back into chat to proceed!
+    </p>
+    <textarea id="codedPrompt" readonly></textarea>
+    <div class="status-summary">
+      <span class="status-pill"><span class="status-dot dot-green"></span> Approved: <strong id="tallyApproved" style="color:#fff; margin-left:2px;">0</strong></span>
+      <span class="status-pill"><span class="status-dot dot-yellow"></span> Discuss: <strong id="tallyDiscuss" style="color:#fff; margin-left:2px;">0</strong></span>
+      <span class="status-pill"><span class="status-dot dot-red"></span> Rejected: <strong id="tallyRejected" style="color:#fff; margin-left:2px;">0</strong></span>
+      <span id="copyNotice" style="margin-left: auto; color: var(--accent-green); font-size:11.5px; opacity:0; transition:0.2s;">Copied to clipboard!</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const items = [
+  // SECTION 1: ACTIVATION
+  {
+    id: "act_center_default",
+    category: "gridActivation",
+    title: "A. Centered Smart Bounding Box with 8 Drag Handles",
+    badge: "Recommended",
+    desc: "When clicking the extension icon, the current tab receives an injected overlay. A 480x360 Apple-style frosted box appears in the viewport center with 8 drag handles and dimension pills (e.g. '480 × 360 px').",
+    preview: "<b>Behavior:</b> The user can immediately reposition by dragging the box header/body, or resize from any corner/edge without needing to drag-select from scratch.",
+    specs: [
+      { k: "Default Size", v: "480 × 360 (or 50% viewport width)" },
+      { k: "Resize handles", v: "4 corners + 4 edges with cursor changes" },
+      { k: "Exit trigger", v: "Press Esc or click close button (X)" }
+    ],
+    pros: "Instant visual feedback; zero latency waiting for user to click-drag; feels like an interactive camera viewfinder.",
+    cons: "Requires moving/resizing if the desired inspiration is in a corner of the webpage."
+  },
+  {
+    id: "act_click_drag",
+    category: "gridActivation",
+    title: "B. Clean Crosshair Marquee (Click & Drag to Create)",
+    badge: "Alternative",
+    desc: "Extension dims the background with crosshairs. The user clicks and drags anywhere on the screen to draw the custom box from scratch. Once drawn, the shutter button appears docked at the bottom of the drawn box.",
+    preview: "<b>Behavior:</b> Standard CleanShot / macOS screenshot behavior.",
+    specs: [
+      { k: "Default State", v: "Full screen dim overlay with crosshair" },
+      { k: "Action", v: "Click-and-drag draws the rectangle" },
+      { k: "Subsequent tweak", v: "Shows resize handles after mouseup" }
+    ],
+    pros: "High initial precision on element bounds without dragging a pre-centered box across the screen.",
+    cons: "Extra click required before seeing the shutter UI; slightly higher friction for quick snap."
+  },
+
+  // SECTION 2: SHUTTER CONTROLS
+  {
+    id: "shutter_apple_pill",
+    category: "gridShutter",
+    title: "A. Camera Viewfinder Shutter Dock (Apple Dark Glass)",
+    badge: "Recommended",
+    desc: "A floating frosted-glass dock anchored to the bottom edge of the resizable box. Features a circular white shutter button with an outer ring, flanked by a target folder badge on the left and quick dimension pill on the right.",
+    preview: "<b>Visual:</b> [ 📁 Site Title ]  ○ (Shutter)  [ 480×360 | ✕ ]",
+    specs: [
+      { k: "Style", v: "Frosted dark glass (`rgba(22, 25, 34, 0.85)`, blur 20px)" },
+      { k: "Shutter button", v: "Double-ring camera shutter (Apple camera style)" },
+      { k: "Feedback", v: "Scale down to 0.92 on click + camera flash animation" }
+    ],
+    pros: "Matches the user's exact camera shutter vision; integrates folder destination visibility before pressing capture.",
+    cons: "Dock adds ~45px underneath the selection box (handles viewport clipping at bottom edge)."
+  },
+  {
+    id: "shutter_minimal_button",
+    category: "gridShutter",
+    title: "B. Minimal Floating Shutter Floating Handle",
+    badge: "Minimalist",
+    desc: "Only a single standalone circular shutter button floating below the center-bottom edge of the box. No extra folder text or toolbar buttons.",
+    preview: "<b>Visual:</b> Just the circular shutter button.",
+    specs: [
+      { k: "Style", v: "Standalone circular button hovering 12px below box" },
+      { k: "Size", v: "44px diameter with camera aperture icon" }
+    ],
+    pros: "Zero clutter; maximum focus on the captured area.",
+    cons: "User cannot see which folder it will be filed into until after clicking."
+  },
+
+  // SECTION 3: ANIMATION & FLY-TO-FOLDER
+  {
+    id: "anim_fly_to_sidepanel",
+    category: "gridAnimation",
+    title: "A. Viewport Flash + Shrink & Fly to Bottom-Right Folder Pill",
+    badge: "Recommended",
+    desc: "1. Subtle white camera flash (80ms).<br>2. A cloned thumbnail of the cropped area shrinks (`scale: 0.2`) and smoothly flies across the screen (280ms cubic-bezier) into a bottom-right Apple-style folder toast: 'Saved to 📁 [Site Title]'.<br>3. Toast expands to reveal 'Open in Library' button.",
+    preview: "<b>Motion:</b> Snap → Flash → Fly curve → Folder pop & checkmark badge.",
+    specs: [
+      { k: "Flash duration", v: "80ms opacity fade" },
+      { k: "Fly curve", v: "`cubic-bezier(0.16, 1, 0.3, 1)` ~300ms duration" },
+      { k: "Destination", v: "Bottom-right floating folder card with 1-click open" }
+    ],
+    pros: "Satisfying, high-delight micro-interaction that provides instant closure and proves the item was organized into its domain folder.",
+    cons: "Requires computing relative coordinates for the fly animation trajectory."
+  },
+  {
+    id: "anim_in_place_fold",
+    category: "gridAnimation",
+    title: "B. In-Place Folder Morph & Collapse",
+    badge: "Alternative",
+    desc: "The resizable box itself folds inward into an envelope/folder icon directly in place, shows a checkmark badge with 'Saved to [Site Title]', and fades out.",
+    preview: "<b>Motion:</b> The box contracts from its center and transforms into a folder.",
+    specs: [
+      { k: "Animation", v: "Scale down + 3D flip card effect (250ms)" },
+      { k: "Destination", v: "Vanishes in place, overlay unmounts" }
+    ],
+    pros: "No cross-screen coordinate math needed; stays localized where the user is looking.",
+    cons: "Less visual sense of an asset being 'filed away into a collection'."
+  },
+
+  // SECTION 4: TECHNICAL / FIDELITY
+  {
+    id: "tech_dpr_canvas_crop",
+    category: "gridTechnical",
+    title: "A. DevicePixelRatio-Aware Canvas Crop with Crisp Retina DPI",
+    badge: "High Fidelity",
+    desc: "Service worker calls `chrome.tabs.captureVisibleTab`. Content script passes bounding box adjusted by `window.devicePixelRatio` so Retina displays (2x / 3x) capture razor-sharp text and borders without blurriness.",
+    preview: "<b>Engine:</b> BoundingClientRect * window.devicePixelRatio → Offscreen / Canvas 2D crop.",
+    specs: [
+      { k: "Resolution", v: "Native physical pixel resolution (Crisp @2x/3x)" },
+      { k: "Format", v: "PNG (lossless for typography/UI) or WebP" },
+      { k: "Storage", v: "Chrome Storage / IndexedDB Blob storage" }
+    ],
+    pros: "Guarantees crystal-clear UI text, vector logos, and fine 1px borders as seen on high-DPI displays.",
+    cons: "Slightly larger base64 / blob file size than 1x scaled crops."
+  },
+  {
+    id: "tech_standard_crop",
+    category: "gridTechnical",
+    title: "B. Standard 1x Downsampled Crop",
+    badge: "Lighter Size",
+    desc: "Downscales captured area to standard 1x CSS pixels before saving to minimize storage quota.",
+    preview: "<b>Engine:</b> Fixed 1x CSS coordinate capture.",
+    specs: [
+      { k: "Resolution", v: "72 DPI standard" },
+      { k: "Format", v: "Compressed JPEG (0.85)" }
+    ],
+    pros: "Lower storage footprint.",
+    cons: "Text and UI elements will appear noticeably blurry on modern Mac Retina screens."
+  }
+];
+
+const state = {};
+items.forEach(it => {
+  state[it.id] = { decision: it.badge === "Recommended" || it.badge === "High Fidelity" ? "approved" : "none", notes: "" };
+});
+
+function render() {
+  const categories = ["gridActivation", "gridShutter", "gridAnimation", "gridTechnical"];
+  categories.forEach(catId => {
+    const el = document.getElementById(catId);
+    if (!el) return;
+    el.innerHTML = "";
+    
+    items.filter(i => i.category === catId).forEach(item => {
+      const cur = state[item.id];
+      const card = document.createElement("div");
+      card.className = "arch-card" + (cur.decision !== "none" ? " " + cur.decision : "");
+
+      card.innerHTML = `
+        <div>
+          <div class="card-title-row">
+            <div class="card-title">${item.title}</div>
+            <span class="pill-badge">${item.badge}</span>
+          </div>
+          <p class="card-desc">${item.desc}</p>
+          <div class="preview-box">${item.preview}</div>
+          <ul class="specs-list">
+            ${item.specs.map(s => `<li><strong>${s.k}:</strong> ${s.v}</li>`).join("")}
+          </ul>
+          <div class="pros-cons">
+            <div class="pro"><span>✓</span> <span>${item.pros}</span></div>
+            <div class="con"><span>⚠</span> <span>${item.cons}</span></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="decision-actions">
+            <button class="btn btn-approve ${cur.decision === 'approved' ? 'active' : ''}" onclick="setDecision('${item.id}', 'approved')">Approve</button>
+            <button class="btn btn-discuss ${cur.decision === 'discuss' ? 'active' : ''}" onclick="setDecision('${item.id}', 'discuss')">Discuss</button>
+            <button class="btn btn-reject ${cur.decision === 'rejected' ? 'active' : ''}" onclick="setDecision('${item.id}', 'rejected')">Reject</button>
+          </div>
+          <input type="text" class="notes-input ${cur.decision !== 'none' ? 'visible' : ''}" 
+                 placeholder="Add constraints, styling or tweak notes..." 
+                 value="${cur.notes}" 
+                 oninput="setNote('${item.id}', this.value)">
+        </div>
+      `;
+      el.appendChild(card);
+    });
+  });
+
+  updatePrompt();
+}
+
+function setDecision(id, dec) {
+  if (state[id].decision === dec) {
+    state[id].decision = "none";
+  } else {
+    state[id].decision = dec;
+  }
+  render();
+}
+
+function setNote(id, val) {
+  state[id].notes = val;
+  updatePrompt();
+}
+
+function updatePrompt() {
+  let approved = [];
+  let discuss = [];
+  let rejected = [];
+
+  items.forEach(item => {
+    const s = state[item.id];
+    if (s.decision === "approved") {
+      approved.push(`- [APPROVED] ${item.title}` + (s.notes ? ` (Note: "${s.notes}")` : ""));
+    } else if (s.decision === "discuss") {
+      discuss.push(`- [DISCUSS] ${item.title}` + (s.notes ? ` (User Note: "${s.notes}")` : ""));
+    } else if (s.decision === "rejected") {
+      rejected.push(`- [REJECTED] ${item.title}` + (s.notes ? ` (Reason: "${s.notes}")` : ""));
+    }
+  });
+
+  document.getElementById("tallyApproved").innerText = approved.length;
+  document.getElementById("tallyDiscuss").innerText = discuss.length;
+  document.getElementById("tallyRejected").innerText = rejected.length;
+
+  const promptText = 
+`ACTION DIRECTIVE: MVP CAPTURE FLOW & OVERLAY UI SPECIFICATION
+
+1. APPROVED FLOW CHOICES:
+${approved.length > 0 ? approved.join("\n") : "- None selected"}
+
+2. ITEMS TO DISCUSS / CLARIFY:
+${discuss.length > 0 ? discuss.join("\n") : "- None"}
+
+3. REJECTED OPTIONS:
+${rejected.length > 0 ? rejected.join("\n") : "- None"}
+
+NEXT STEPS FOR ANTIGRAVITY:
+1. Proceed with implementing the smallest viable flow matching the approved specifications:
+   - Manifest V3 extension configuration with click action trigger
+   - Content script injecting the interactive resizable overlay & Apple-style shutter dock
+   - Shutter click triggering high-DPI capture, metadata extraction (domain, site title, URL)
+   - "Fly-to-folder" animation sending the thumbnail into the site folder
+   - Save into local storage organized under the site's folder hierarchy.`;
+
+  document.getElementById("codedPrompt").value = promptText;
+}
+
+function copyPrompt() {
+  const el = document.getElementById("codedPrompt");
+  navigator.clipboard.writeText(el.value).then(() => {
+    const notice = document.getElementById("copyNotice");
+    notice.style.opacity = "1";
+    setTimeout(() => { notice.style.opacity = "0"; }, 2000);
+  });
+}
+
+// Initial render
+render();
+</script>
+</body>
+</html>
