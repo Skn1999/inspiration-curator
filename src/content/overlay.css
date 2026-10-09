@@ -3,11 +3,28 @@
 #inspire-overlay-root {
   position: fixed !important;
   inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
   z-index: 2147483647 !important;
   pointer-events: none !important;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif !important;
   -webkit-font-smoothing: antialiased !important;
   user-select: none !important;
+  overflow: hidden !important;
+}
+
+/* Ensure native popovers don't have browser default margins/borders */
+#inspire-overlay-root:popover-open,
+.inspire-macos-folder-toast:popover-open,
+.inspire-flying-crop:popover-open {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  overflow: visible !important;
 }
 
 /* Background Dimmer */

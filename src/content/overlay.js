@@ -90,6 +90,10 @@
 
     overlayRoot = document.createElement('div');
     overlayRoot.id = 'inspire-overlay-root';
+    // Promote to Top Layer using Popover API (browser top layer beats any dialog, modal, or z-index)
+    if (typeof overlayRoot.showPopover === 'function') {
+      overlayRoot.setAttribute('popover', 'manual');
+    }
 
     overlayRoot.innerHTML = `
       <div class="inspire-backdrop visible"></div>
@@ -121,7 +125,16 @@
       <div class="inspire-flash"></div>
     `;
 
-    document.body.appendChild(overlayRoot);
+    // Append to documentElement to avoid any body-level transform/overflow/filter issues
+    (document.documentElement || document.body).appendChild(overlayRoot);
+
+    if (typeof overlayRoot.showPopover === 'function') {
+      try {
+        overlayRoot.showPopover();
+      } catch (e) {
+        // Fallback gracefully if popover is already showing or not supported
+      }
+    }
 
     viewfinder = overlayRoot.querySelector('.inspire-viewfinder');
     dimensionPill = overlayRoot.querySelector('.inspire-dimension-pill');
@@ -346,15 +359,24 @@
       const flyingImg = document.createElement('img');
       flyingImg.src = croppedDataUrl;
       flyingImg.className = 'inspire-flying-crop';
+      if (typeof flyingImg.showPopover === 'function') {
+        flyingImg.setAttribute('popover', 'manual');
+      }
       flyingImg.style.left = `${sourceRect.left}px`;
       flyingImg.style.top = `${sourceRect.top}px`;
       flyingImg.style.width = `${sourceRect.width}px`;
       flyingImg.style.height = `${sourceRect.height}px`;
-      document.body.appendChild(flyingImg);
+      (document.documentElement || document.body).appendChild(flyingImg);
+      if (typeof flyingImg.showPopover === 'function') {
+        try { flyingImg.showPopover(); } catch(e) {}
+      }
 
       // 2. Create Destination Folder Toast at Bottom-Right
       const toast = document.createElement('div');
       toast.className = 'inspire-macos-folder-toast';
+      if (typeof toast.showPopover === 'function') {
+        toast.setAttribute('popover', 'manual');
+      }
       toast.innerHTML = `
         <div class="inspire-toast-folder-icon">
           ${getMacOSFolderSVG(36, 30)}
@@ -365,7 +387,10 @@
         </div>
         <button class="inspire-toast-btn" id="openSidePanelBtn">Open Library</button>
       `;
-      document.body.appendChild(toast);
+      (document.documentElement || document.body).appendChild(toast);
+      if (typeof toast.showPopover === 'function') {
+        try { toast.showPopover(); } catch(e) {}
+      }
 
       // Open sidepanel button handler
       toast.querySelector('#openSidePanelBtn').addEventListener('click', () => {
