@@ -184,8 +184,8 @@
 
   // Dragging and Resizing Logic
   function setupInteraction() {
-    // Handle dragging the viewfinder
-    viewfinder.addEventListener('mousedown', (e) => {
+    // Start Dragging
+    const onStartDrag = (e) => {
       if (e.target.classList.contains('inspire-handle') || e.target.closest('.inspire-dock')) {
         return; // Don't drag when touching handles or dock controls
       }
@@ -195,12 +195,16 @@
       const rect = viewfinder.getBoundingClientRect();
       initialRect = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
       e.preventDefault();
-    });
+      e.stopPropagation();
+    };
 
-    // Handle resizing handles
+    viewfinder.addEventListener('mousedown', onStartDrag);
+    viewfinder.addEventListener('pointerdown', onStartDrag);
+
+    // Start Resizing from Handles
     const handles = viewfinder.querySelectorAll('.inspire-handle');
     handles.forEach(h => {
-      h.addEventListener('mousedown', (e) => {
+      const onStartResize = (e) => {
         isResizing = true;
         resizeDirection = h.getAttribute('data-dir');
         startX = e.clientX;
@@ -209,10 +213,13 @@
         initialRect = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
         e.preventDefault();
         e.stopPropagation();
-      });
+      };
+      h.addEventListener('mousedown', onStartResize);
+      h.addEventListener('pointerdown', onStartResize);
     });
 
-    window.addEventListener('mousemove', (e) => {
+    // Move Handler
+    const onMove = (e) => {
       if (isDragging) {
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
@@ -220,6 +227,7 @@
         const newTop = Math.max(0, Math.min(window.innerHeight - initialRect.height, initialRect.top + dy));
         viewfinder.style.left = `${newLeft}px`;
         viewfinder.style.top = `${newTop}px`;
+        e.preventDefault();
       } else if (isResizing) {
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
@@ -248,13 +256,23 @@
         viewfinder.style.width = `${width}px`;
         viewfinder.style.height = `${height}px`;
         updateDimensionPill(width, height);
+        e.preventDefault();
       }
-    });
+    };
 
-    window.addEventListener('mouseup', () => {
+    window.addEventListener('mousemove', onMove, { passive: false });
+    window.addEventListener('pointermove', onMove, { passive: false });
+
+    // End Drag / Resize
+    const onEnd = () => {
       isDragging = false;
       isResizing = false;
-    });
+      resizeDirection = null;
+    };
+
+    window.addEventListener('mouseup', onEnd);
+    window.addEventListener('pointerup', onEnd);
+    window.addEventListener('pointercancel', onEnd);
   }
 
   // Core Capture Flow & macOS Fly-to-Folder Animation

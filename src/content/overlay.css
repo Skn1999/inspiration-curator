@@ -34,6 +34,7 @@
   background: rgba(0, 0, 0, 0.45) !important;
   pointer-events: auto !important;
   opacity: 0;
+  z-index: 1 !important;
   transition: opacity 240ms cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 .inspire-backdrop.visible {
@@ -44,6 +45,7 @@
 .inspire-viewfinder {
   position: absolute !important;
   pointer-events: auto !important;
+  z-index: 2 !important;
   border: 2px solid #0a84ff !important;
   border-radius: 8px !important;
   background: rgba(10, 132, 255, 0.04) !important;
@@ -70,25 +72,39 @@
   pointer-events: none !important;
 }
 
-/* 8 Resize Handles */
+/* 8 Resize Handles with generous 20px hit targets */
 .inspire-handle {
   position: absolute !important;
-  width: 10px !important;
-  height: 10px !important;
+  width: 12px !important;
+  height: 12px !important;
   background: #ffffff !important;
   border: 1.5px solid #0a84ff !important;
-  border-radius: 2px !important;
+  border-radius: 3px !important;
   pointer-events: auto !important;
-  z-index: 10 !important;
+  z-index: 100 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+  transition: transform 120ms ease, background 120ms ease !important;
 }
-.inspire-handle.nw { top: -5px; left: -5px; cursor: nwse-resize !important; }
-.inspire-handle.n  { top: -5px; left: calc(50% - 5px); cursor: ns-resize !important; }
-.inspire-handle.ne { top: -5px; right: -5px; cursor: nesw-resize !important; }
-.inspire-handle.e  { top: calc(50% - 5px); right: -5px; cursor: ew-resize !important; }
-.inspire-handle.se { bottom: -5px; right: -5px; cursor: nwse-resize !important; }
-.inspire-handle.s  { bottom: -5px; left: calc(50% - 5px); cursor: ns-resize !important; }
-.inspire-handle.sw { bottom: -5px; left: -5px; cursor: nesw-resize !important; }
-.inspire-handle.w  { top: calc(50% - 5px); left: -5px; cursor: ew-resize !important; }
+/* Invisible 24px hit zone around each handle for effortless grabbing */
+.inspire-handle::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: -6px !important;
+  background: transparent !important;
+}
+.inspire-handle:hover {
+  transform: scale(1.25) !important;
+  background: #0a84ff !important;
+}
+
+.inspire-handle.nw { top: -6px; left: -6px; cursor: nwse-resize !important; }
+.inspire-handle.n  { top: -6px; left: calc(50% - 6px); cursor: ns-resize !important; }
+.inspire-handle.ne { top: -6px; right: -6px; cursor: nesw-resize !important; }
+.inspire-handle.e  { top: calc(50% - 6px); right: -6px; cursor: ew-resize !important; }
+.inspire-handle.se { bottom: -6px; right: -6px; cursor: nwse-resize !important; }
+.inspire-handle.s  { bottom: -6px; left: calc(50% - 6px); cursor: ns-resize !important; }
+.inspire-handle.sw { bottom: -6px; left: -6px; cursor: nesw-resize !important; }
+.inspire-handle.w  { top: calc(50% - 6px); left: -6px; cursor: ew-resize !important; }
 
 /* Frosted Apple Shutter Dock */
 .inspire-dock {
@@ -109,7 +125,7 @@
   pointer-events: auto !important;
   cursor: default !important;
   transition: transform 200ms cubic-bezier(0.25, 1, 0.5, 1) !important;
-  z-index: 20 !important;
+  z-index: 200 !important;
 }
 
 /* macOS-style Folder Preview Pill in Dock */
