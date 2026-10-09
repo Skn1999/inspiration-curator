@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inspiration Curator Library</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="panel-container">
+    <header class="panel-header">
+      <div class="header-left">
+        <div class="app-icon-badge">
+          <svg class="macos-folder-svg" width="20" height="16" viewBox="0 0 32 26" fill="none">
+            <path d="M2 4C2 2.89543 2.89543 2 4 2H11C12.3 2 13.5 2.8 14.2 3.8L15.6 5.6C16.1 6.2 16.8 6.6 17.6 6.6H28C29.1046 6.6 30 7.49543 30 8.6V12H2V4Z" fill="#3FA6F5"/>
+            <rect x="1" y="7" width="30" height="18" rx="3.5" fill="#0071E3"/>
+          </svg>
+        </div>
+        <div class="header-titles">
+          <h1>Inspirations</h1>
+          <span class="total-count-badge" id="totalCount">0 items</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="refreshBtn" title="Refresh">↻</button>
+      </div>
+    </header>
+
+    <!-- Search / Filter -->
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search folders or sites...">
+    </div>
+
+    <!-- Folders & Items Container -->
+    <div class="folders-container" id="foldersContainer">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon-wrap">
+          <svg class="macos-folder-svg" width="48" height="40" viewBox="0 0 32 26" fill="none">
+            <path d="M2 4C2 2.89543 2.89543 2 4 2H11C12.3 2 13.5 2.8 14.2 3.8L15.6 5.6C16.1 6.2 16.8 6.6 17.6 6.6H28C29.1046 6.6 30 7.49543 30 8.6V12H2V4Z" fill="#3FA6F5"/>
+            <rect x="1" y="7" width="30" height="18" rx="3.5" fill="#0071E3"/>
+          </svg>
+        </div>
+        <h3>No inspirations yet</h3>
+        <p>Click the extension icon on any page to open the camera viewfinder and snap your first inspiration.</p>
+      </div>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div class="modal-backdrop" id="modalBackdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <span class="modal-folder-pill" id="modalFolderPill">Folder</span>
+            <span class="modal-site" id="modalSite">site.com</span>
+          </div>
+          <button class="modal-close" id="modalClose">✕</button>
+        </div>
+        <div class="modal-body">
+          <img id="modalImg" src="" alt="Capture Preview">
+        </div>
+        <div class="modal-footer">
+          <a href="#" target="_blank" class="modal-visit-btn" id="modalVisitLink">Open Source Page ↗</a>
+          <button class="modal-del-btn" id="modalDeleteBtn">Delete</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
