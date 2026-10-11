@@ -123,11 +123,23 @@ Following the active `apple-design` skill guidelines:
 | **Phase 1: MVP Core** | Static Area Capture, Metadata & Auto-Folders | • Area drag-and-drop crop screenshot<br>• Metadata collection (URL, title, timestamp, viewport)<br>• **Domain-based Auto-Folder creation (Site Title → URL fallback)**<br>• Local gallery & folder list in extension Side Panel (Apple Design Dark) |
 | **Phase 2: Motion Capture** | Motion & Video Extractor | • Area-bounded tab recording (WebM/MP4)<br>• Direct HTML5 video link sniffer & download<br>• Recording duration presets (3s, 5s, 10s, manual) |
 | **Phase 3: Design Intelligence** | Styling & Token Extraction | • Auto-extract CSS font styles and color palette<br>• Copy as CSS / Tailwind snippet |
-| **Phase 4: Sync & Ecosystem** | Cloud & Tool Integrations | • Notion sync (via Notion API)<br>• Figma plugin / copy-as-frame<br>• Cloud backup & export |
+| **Phase 4: AI Curator & Moodboard Generator** | Creative AI Intelligence (Future Concept) | • **Multimodal AI Moodboard Generator:** Synthesize collections of saved screenshots, videos, and motion loops into cohesive, curated visual moodboards.<br>• **Aesthetic Clustering & Semantic Tagging:** Auto-categorize inspirations by design theme (e.g., Brutalist, Apple Minimal, Neo-Skeuomorphic, Bento Grids, Cyberpunk).<br>• **Generative Palette & Vibe Prompts:** Extract common color harmonies and generate design prompts or styling briefs based on folder contents. |
+| **Phase 5: Sync & Ecosystem** | Cloud & Tool Integrations | • Notion sync (via Notion API)<br>• Figma plugin / copy-as-frame<br>• Cloud backup & export |
 
 ---
 
-### 8. Open Brainstorming Questions for Discussion
+### 8. Feature Backlog & Brainstorming Ideas
+- **AI Moodboard Generator (Multimodal Vision):**
+  - Ability to select a folder (or multi-select items) and click *"Generate Moodboard"*.
+  - AI analyzes the visual assets (colors, typography, composition, motion dynamics) and produces a structured design board:
+    - Shared design traits and art direction notes.
+    - Curated color story / swatches.
+    - Suggested design system pairing (fonts, radius, layout balance).
+  - Can be exported as a unified high-res image, PDF, or Figma canvas.
+
+---
+
+### 9. Open Brainstorming Questions for Discussion
 1. **Motion Output Format:** Should recorded animations be saved as lightweight WebM/MP4 video files, animated GIFs, or offer both? (WebM is tiny and 60fps; GIFs are widely portable).
 2. **Library Surface Area:** Should the collection library live primarily inside the **Chrome Side Panel** (opens beside whatever you browse) or as a standalone **Full-page Web App Dashboard**?
 3. **Storage Strategy:** Start purely offline/local-first (IndexedDB + local downloads) or connect to cloud storage from day one?
